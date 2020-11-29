@@ -2,11 +2,45 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  /* text-align: center;
+  color: #2c3e50; */
+  margin: 60px;
 }
 
-.white {
-  background-color: white;
+.trading-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.trading-menu {
+  border-bottom: solid 1px grey;
+  margin-bottom: 15px;
+}
+
+.trading-diagram-wrapper {
+  align-self: center;
+}
+
+.trading-diagram {
+  width: 100%;
+  height: auto;
+}
+
+.trading-menu-item {
+  border: 1px solid;
+  border-bottom: none;
+  /* border-radius: 3px; */
+  font-size: 14px;
+  padding: 3px;
+  margin-right: 3px;
+  background-color: transparent;
+}
+
+.trading-menu-item_active {
+  background-color: rgba(115, 187, 221, 0.877);
+}
+
+.trading-menu-item:hover {
+  background-color: rgba(115, 187, 221, 0.877);
 }
