@@ -10,7 +10,9 @@ export default {
       chart: {
         chart: null,
       },
+      nRSI: 3,
       ohlcvData: null,
+      indicatorType: "Индикаторы",
     };
   },
   beforeMount() {
@@ -33,25 +35,25 @@ export default {
         settings: {},
         grid: {},
       },
-      //   onchart: [
-      //     {
-      //       name: "nnnn, 50",
-      //       type: "Spline",
-      //       data: [
-      //         [1587272400000, 7131],
-      //         [1587276000000, 7132.49],
-      //         [1587279600000, 7133.55],
-      //         [1587283200000, 7134.67],
-      //         [1587286800000, 7136.67],
-      //         [1587290400000, 7138.17],
-      //         [1587294000000, 7139.46],
-      //         [1587297600000, 7140.6],
-      //         [1587301200000, 7139.5],
-      //         [1587304800000, 7138.56],
-      //       ],
-      //       settings: { color: "red" },
-      //     },
-      //   ],
+      offchart: [
+        {
+          name: "nnnn, 50",
+          type: "Spline",
+          data: [
+            [1587272400000, 7131],
+            [1587276000000, 7132.49],
+            [1587279600000, 7133.55],
+            [1587283200000, 7134.67],
+            [1587286800000, 7136.67],
+            [1587290400000, 7138.17],
+            [1587294000000, 7139.46],
+            [1587297600000, 7140.6],
+            [1587301200000, 7139.5],
+            [1587304800000, 7138.56],
+          ],
+          settings: { color: "red" },
+        },
+      ],
     };
   },
   methods: {
@@ -112,6 +114,48 @@ export default {
         }));
       });
       this.ohlcvData = await dataArray;
+    },
+    inputIndicator() {
+      if (this.indicatorType === "RSI") {
+        this.setRSI();
+      }
+    },
+    async setRSI() {
+      let generalRSIdata = [];
+      let arrayOfGroup = [];
+      let arr = [...this.chart.chart.data];
+      for (let i = 0; i <= arr.length; i++) {
+        let newarr = [];
+        for (let j = 1; j < this.nRSI + 1; j++) {
+          if (i - j >= 0) {
+            newarr.push(arr[i - j]);
+          }
+        }
+        arrayOfGroup.push(newarr);
+      }
+
+      arrayOfGroup.forEach((element) => {
+        let upCandles = 0;
+        let downCadles = 0;
+        element.forEach((item) => {
+          if (item[1] < item[4]) {
+            upCandles = upCandles + 1;
+          } else {
+            downCadles = downCadles + 1;
+          }
+        });
+        let rsiValue = (upCandles / (upCandles + downCadles)) * 100;
+        if (element[0] && element[0][0]) {
+          generalRSIdata.push([element[0][0], rsiValue]);
+        }
+      });
+      this.chart.offchart = [];
+      this.chart.offchart.push({
+        name: "nnnn, 50",
+        type: "Spline",
+        data: generalRSIdata,
+        settings: { color: "red" },
+      });
     },
   },
 };

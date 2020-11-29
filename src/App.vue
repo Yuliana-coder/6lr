@@ -8,6 +8,9 @@
          :class="{'trading-menu-item_active': chart.chart.type === 'Candles'}">Японские свечи</button>
           <input type="file" @change="inputFile" id="file" />
           <button @click="setFormatData" v-if="ohlcvData && ohlcvData.length">Построить диаграмму</button>
+          <select @change="inputIndicator" v-model="indicatorType">
+            <option value="RSI">RSI</option>
+          </select>
       </div>
       <div v-if="chart.chart.data.length" class="trading-diagram-wrapper">
         <trading-vue class="trading-diagram" :title-txt="chart.chart.name"
