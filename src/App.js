@@ -11,6 +11,12 @@ export default {
         chart: null,
       },
       nRSI: 3,
+      nWilliams: 3,
+      isShowPopupRSI: false,
+      isError: false,
+      isShowPopupWilliams: false,
+      isShowPopupMomentum: false,
+      nMomentum: 3,
       ohlcvData: null,
       indicatorType: "Индикаторы",
     };
@@ -35,24 +41,46 @@ export default {
         settings: {},
         grid: {},
       },
-      offchart: [
+      onchart: [
         {
-          name: "nnnn, 50",
           type: "Spline",
           data: [
-            [1587272400000, 7131],
-            [1587276000000, 7132.49],
-            [1587279600000, 7133.55],
-            [1587283200000, 7134.67],
-            [1587286800000, 7136.67],
-            [1587290400000, 7138.17],
-            [1587294000000, 7139.46],
-            [1587297600000, 7140.6],
-            [1587301200000, 7139.5],
-            [1587304800000, 7138.56],
+            [1587272400000, 7120.93],
+            [1587276000000, 7130.96],
+            [1587279600000, 7134.1],
+            [1587283200000, 7150.1],
+            [1587286800000, 7175.7],
+            [1587290400000, 7195.77],
+            [1587294000000, 7150.1],
+            [1587297600000, 7150.2],
+            [1587301200000, 7150.7],
+            [1587304800000, 7150.03],
           ],
-          settings: { color: "red" },
+          settings: {
+            upper: 70,
+            lower: 30,
+            backColor: "#9b9ba316",
+            color: "red",
+          },
         },
+      ],
+      offchart: [
+        // {
+        //   type: "Spline",
+        //   data: [
+        //     [1587272400000, 7400.1],
+        //     [1587276000000, 7300.96],
+        //     [1587279600000, 7690.1],
+        //     [1587283200000, 7590.1],
+        //     [1587286800000, 7601.7],
+        //     [1587290400000, 7850.77],
+        //     [1587294000000, 7750.1],
+        //     [1587297600000, 7701.2],
+        //     [1587301200000, 7680.7],
+        //     [1587304800000, 7120.03],
+        //   ],
+        //   settings: { color: "black" },
+        // },
       ],
     };
   },
@@ -117,45 +145,182 @@ export default {
     },
     inputIndicator() {
       if (this.indicatorType === "RSI") {
-        this.setRSI();
+        this.isShowPopupRSI = true;
+      }
+      if (this.indicatorType === "williams") {
+        this.isShowPopupWilliams = true;
+      }
+      if (this.indicatorType === "PVT") {
+        this.setPVT();
+      }
+      if (this.indicatorType === "OBV") {
+        this.setOBV();
+      }
+      if (this.indicatorType === "Momentum") {
+        this.isShowPopupMomentum = true;
       }
     },
     async setRSI() {
-      let generalRSIdata = [];
-      let arrayOfGroup = [];
-      let arr = [...this.chart.chart.data];
-      for (let i = 0; i <= arr.length; i++) {
-        let newarr = [];
-        for (let j = 1; j < this.nRSI + 1; j++) {
-          if (i - j >= 0) {
-            newarr.push(arr[i - j]);
+      if (this.nRSI) {
+        this.isShowPopupRSI = false;
+        this.isError = false;
+        let generalRSIdata = [];
+        let arrayOfGroup = [];
+        let arr = [...this.chart.chart.data];
+        for (let i = 0; i <= arr.length; i++) {
+          let newarr = [];
+          for (let j = 1; j < this.nRSI + 1; j++) {
+            if (i - j >= 0) {
+              newarr.push(arr[i - j]);
+            }
           }
+          arrayOfGroup.push(newarr);
         }
-        arrayOfGroup.push(newarr);
-      }
 
-      arrayOfGroup.forEach((element) => {
-        let upCandles = 0;
-        let downCadles = 0;
-        element.forEach((item) => {
-          if (item[1] < item[4]) {
-            upCandles = upCandles + 1;
-          } else {
-            downCadles = downCadles + 1;
+        arrayOfGroup.forEach((element) => {
+          let upCandles = 0;
+          let downCadles = 0;
+          element.forEach((item) => {
+            if (item[1] < item[4]) {
+              upCandles = upCandles + 1;
+            } else {
+              downCadles = downCadles + 1;
+            }
+          });
+          let rsiValue = (upCandles / (upCandles + downCadles)) * 100;
+          if (element[0] && element[0][0]) {
+            generalRSIdata.push([element[0][0], rsiValue]);
           }
         });
-        let rsiValue = (upCandles / (upCandles + downCadles)) * 100;
-        if (element[0] && element[0][0]) {
-          generalRSIdata.push([element[0][0], rsiValue]);
+        this.chart.offchart.push({
+          name: "RSI," + this.nRSI,
+          type: "Spline",
+          data: generalRSIdata,
+          settings: { color: "red" },
+        });
+      } else {
+        this.isError = true;
+      }
+    },
+    setWilliams() {
+      if (this.nWilliams) {
+        this.isShowPopupWilliams = false;
+        this.isError = false;
+        let generalWilliamsdata = [];
+        let arrayOfGroup = [];
+        let arr = [...this.chart.chart.data];
+        for (let i = 0; i <= arr.length; i++) {
+          let newarr = [];
+          for (let j = 1; j < this.nWilliams + 1; j++) {
+            if (i - j >= 0) {
+              newarr.push(arr[i - j]);
+            }
+          }
+          arrayOfGroup.push(newarr);
         }
-      });
-      this.chart.offchart = [];
+
+        arrayOfGroup.forEach((element) => {
+          let arrayOfClosePrice = [];
+          element.forEach((item) => {
+            arrayOfClosePrice.push(item[4]);
+          });
+
+          if (element[0] && element[1] && element[0][0]) {
+            console.log(
+              Math.min(...arrayOfClosePrice),
+              Math.max(...arrayOfClosePrice)
+            );
+            let williamsValue =
+              ((Math.max(...arrayOfClosePrice) - element[0][4]) /
+                (Math.max(...arrayOfClosePrice) -
+                  Math.min(...arrayOfClosePrice))) *
+              -100;
+            generalWilliamsdata.push([element[0][0], williamsValue]);
+          }
+        });
+
+        this.chart.offchart.push({
+          name: "Williams," + this.nWilliams,
+          type: "Spline",
+          data: generalWilliamsdata,
+          settings: { color: "blue" },
+        });
+
+        console.log(generalWilliamsdata);
+      } else {
+        this.isError = true;
+      }
+    },
+    setPVT() {
+      let generalPVTdata = [];
+      let preP = 0;
+      let dataArray = [...this.chart.chart.data];
+      let PVT = 0;
+      for (let i = 1; i < dataArray.length; i++) {
+        if (i - 1 >= 0) {
+          preP = dataArray[i - 1][4];
+        }
+        PVT = PVT + ((dataArray[i][4] - preP) / preP) * dataArray[i][5];
+        generalPVTdata.push([dataArray[i][0], PVT]);
+      }
+      console.log(generalPVTdata);
       this.chart.offchart.push({
-        name: "nnnn, 50",
+        name: "PVT",
         type: "Spline",
-        data: generalRSIdata,
-        settings: { color: "red" },
+        data: generalPVTdata,
+        settings: { color: "black" },
       });
+    },
+    setOBV() {
+      let generaOBVTdata = [];
+      let dataArray = [...this.chart.chart.data];
+      let obv = 0;
+      for (let i = 1; i < dataArray.length; i++) {
+        if (dataArray[i][4] > dataArray[i - 1][4]) {
+          obv = obv + dataArray[i][4];
+        } else if (dataArray[i][4] < dataArray[i - 1][4]) {
+          obv = obv - dataArray[i][4];
+        }
+        generaOBVTdata.push([dataArray[i][0], obv]);
+      }
+
+      console.log(generaOBVTdata);
+      this.chart.offchart.push({
+        name: "OBV",
+        type: "Spline",
+        data: generaOBVTdata,
+        settings: { color: "#FF4500" },
+      });
+    },
+    setMomentum() {
+      if (this.nMomentum) {
+        this.isShowPopupMomentum = false;
+        this.isError = false;
+        let generaMomentumTdata = [];
+        let dataArray = [...this.chart.chart.data];
+        for (let i = 0; i < dataArray.length; i++) {
+          if (i - this.nMomentum >= 0) {
+            generaMomentumTdata.push([
+              dataArray[i][0],
+              dataArray[i][4] - dataArray[i - this.nMomentum][4],
+            ]);
+          } else {
+            generaMomentumTdata.push([
+              dataArray[i][0],
+              dataArray[i][4] - dataArray[0][4],
+            ]);
+          }
+        }
+
+        this.chart.offchart.push({
+          name: "Momentum",
+          type: "Spline",
+          data: generaMomentumTdata,
+          settings: { color: "#00FF00" },
+        });
+      } else {
+        this.isError = true;
+      }
     },
   },
 };

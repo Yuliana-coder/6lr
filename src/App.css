@@ -5,6 +5,7 @@
   /* text-align: center;
   color: #2c3e50; */
   margin: 60px;
+  position: relative;
 }
 
 .trading-wrapper {
@@ -43,4 +44,41 @@
 
 .trading-menu-item:hover {
   background-color: rgba(115, 187, 221, 0.877);
+}
+
+.trading-popup {
+  width: 350px;
+  height: 150px;
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+  position: absolute;
+  padding: 35px;
+  z-index: 100;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 7px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.trading-popup_title {
+  margin-bottom: 15px;
+}
+
+.trading-popup_input-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.trading-popup_input {
+  border: solid 1px black;
+  margin: 0 10px;
+}
+
+.trading-popup_error {
+  color: red;
+  font-size: 12px;
 }
