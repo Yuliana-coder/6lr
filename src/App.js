@@ -1,12 +1,18 @@
 import TradingVue from "trading-vue-js";
+import ColourPicker from "vue-colour-picker";
+import Vue from "vue";
+
+Vue.component("ColourPicker", ColourPicker);
 
 export default {
   name: "App",
   components: {
     TradingVue,
+    "colour-picker": ColourPicker,
   },
   data() {
     return {
+      diagramColor: "green",
       chart: {
         chart: null,
       },
@@ -16,9 +22,14 @@ export default {
       isError: false,
       isShowPopupWilliams: false,
       isShowPopupMomentum: false,
+      //   isShowEditData: false,
       nMomentum: 3,
       ohlcvData: null,
       indicatorType: "Индикаторы",
+      isNotDrawDiagram: true,
+      isShowEditDiagramPopup: false,
+      lineThickness: 1,
+      editLine: "diagram",
     };
   },
   beforeMount() {
@@ -38,23 +49,23 @@ export default {
           [1587301200000, 7168.7, 7168.8, 7085, 7112.4, 448.23],
           [1587304800000, 7112.03, 7123, 7056.9, 7115.5, 419.09],
         ],
-        settings: {},
+        settings: { color: this.diagramColor, lineWidth: 1 },
         grid: {},
       },
       onchart: [
         {
           type: "Spline",
           data: [
-            [1587272400000, 7120.93],
-            [1587276000000, 7130.96],
-            [1587279600000, 7134.1],
-            [1587283200000, 7150.1],
-            [1587286800000, 7175.7],
-            [1587290400000, 7195.77],
-            [1587294000000, 7150.1],
-            [1587297600000, 7150.2],
-            [1587301200000, 7150.7],
-            [1587304800000, 7150.03],
+            // [1587272400000, 7120.93],
+            // [1587276000000, 7130.96],
+            // [1587279600000, 7134.1],
+            // [1587283200000, 7150.1],
+            // [1587286800000, 7175.7],
+            // [1587290400000, 7195.77],
+            // [1587294000000, 7150.1],
+            // [1587297600000, 7150.2],
+            // [1587301200000, 7150.7],
+            // [1587304800000, 7150.03],
           ],
           settings: {
             upper: 70,
@@ -117,11 +128,13 @@ export default {
       this.ohlcvData = arrData;
 
       reader.readAsText(file);
+      this.isNotDrawDiagram = false;
     },
     setFormatData() {
       this.getArrayData().then(() => {
         this.chart.chart.data = this.ohlcvData.splice(0, 800);
         this.$forceUpdate();
+        this.isNotDrawDiagram = true;
       });
     },
     async getArrayData() {
@@ -193,10 +206,10 @@ export default {
           }
         });
         this.chart.offchart.push({
-          name: "RSI," + this.nRSI,
+          name: "RSI",
           type: "Spline",
           data: generalRSIdata,
-          settings: { color: "red" },
+          settings: { color: "red", lineWidth: 1 },
         });
       } else {
         this.isError = true;
@@ -226,10 +239,6 @@ export default {
           });
 
           if (element[0] && element[1] && element[0][0]) {
-            console.log(
-              Math.min(...arrayOfClosePrice),
-              Math.max(...arrayOfClosePrice)
-            );
             let williamsValue =
               ((Math.max(...arrayOfClosePrice) - element[0][4]) /
                 (Math.max(...arrayOfClosePrice) -
@@ -240,13 +249,11 @@ export default {
         });
 
         this.chart.offchart.push({
-          name: "Williams," + this.nWilliams,
+          name: "Williams",
           type: "Spline",
           data: generalWilliamsdata,
-          settings: { color: "blue" },
+          settings: { color: "blue", lineWidth: 1 },
         });
-
-        console.log(generalWilliamsdata);
       } else {
         this.isError = true;
       }
@@ -263,12 +270,11 @@ export default {
         PVT = PVT + ((dataArray[i][4] - preP) / preP) * dataArray[i][5];
         generalPVTdata.push([dataArray[i][0], PVT]);
       }
-      console.log(generalPVTdata);
       this.chart.offchart.push({
         name: "PVT",
         type: "Spline",
         data: generalPVTdata,
-        settings: { color: "black" },
+        settings: { color: "black", lineWidth: 1 },
       });
     },
     setOBV() {
@@ -284,12 +290,11 @@ export default {
         generaOBVTdata.push([dataArray[i][0], obv]);
       }
 
-      console.log(generaOBVTdata);
       this.chart.offchart.push({
         name: "OBV",
         type: "Spline",
         data: generaOBVTdata,
-        settings: { color: "#FF4500" },
+        settings: { color: "#FF4500", lineWidth: 1 },
       });
     },
     setMomentum() {
@@ -316,11 +321,38 @@ export default {
           name: "Momentum",
           type: "Spline",
           data: generaMomentumTdata,
-          settings: { color: "#00FF00" },
+          settings: { color: "#00FF00", lineWidth: 1 },
         });
       } else {
         this.isError = true;
       }
+    },
+    setEditDiagram() {
+      if (this.editLine === "diagram") {
+        this.chart.chart.settings.color = this.diagramColor;
+        this.chart.chart.settings.lineWidth = this.lineThickness;
+      } else {
+        let dataArray = [...this.chart.offchart];
+        [...dataArray].find((element) => {
+          return element.name === this.editLine;
+        }).settings.color = this.diagramColor;
+        [...dataArray].find((element) => {
+          return element.name === this.editLine;
+        }).settings.lineWidth = this.lineThickness;
+      }
+    },
+  },
+  computed: {
+    isShowEditData() {
+      return this.chart.chart.data.length;
+    },
+    allIndicators() {
+      let dataArray = [...this.chart.offchart];
+      dataArray = dataArray.map((element) => {
+        return element.name;
+      });
+
+      return dataArray;
     },
   },
 };

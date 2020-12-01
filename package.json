@@ -11,7 +11,9 @@
     "core-js": "^3.6.5",
     "time-stamp": "^2.2.0",
     "trading-vue-js": "^0.9.0",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-color": "^2.7.1",
+    "vue-colour-picker": "0.0.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

@@ -17,6 +17,8 @@
 .trading-menu {
   border-bottom: solid 1px grey;
   margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .trading-diagram-wrapper {
@@ -31,7 +33,6 @@
 .trading-menu-item {
   border: 1px solid;
   border-bottom: none;
-  /* border-radius: 3px; */
   font-size: 14px;
   padding: 3px;
   margin-right: 3px;
@@ -44,6 +45,49 @@
 
 .trading-menu-item:hover {
   background-color: rgba(115, 187, 221, 0.877);
+}
+
+.trading-menu__download-label {
+  border: 1px solid;
+  border-bottom: none;
+  font-size: 14px;
+  padding: 3px;
+  margin-right: 3px;
+  background-color: transparent;
+}
+
+.trading-menu__download-label:hover {
+  cursor: pointer;
+}
+
+.trading-menu__confirm-data {
+  border: 1px solid;
+  border-bottom: none;
+  font-size: 14px;
+  padding: 3px;
+  margin-right: 3px;
+  background-color: rgb(148, 230, 159);
+}
+
+.trading-menu__confirm-data:hover {
+  cursor: pointer;
+}
+
+.trading-menu__edit-diagram {
+  border: 1px solid;
+  border-bottom: none;
+  font-size: 14px;
+  padding: 3px;
+  margin-right: 3px;
+  background-color: transparent;
+}
+
+.trading-menu__edit-diagram:hover {
+  cursor: pointer;
+}
+
+.trading-menu__selector {
+  cursor: pointer;
 }
 
 .trading-popup {
@@ -81,4 +125,50 @@
 .trading-popup_error {
   color: red;
   font-size: 12px;
+}
+
+.trading-popup_edit-diagram {
+  padding: 80px 40px;
+}
+
+.trading-popup_edit-diagram-item {
+  margin: 10px 0;
+}
+
+.trading-popup_edit-diagram-item-option_bold {
+  font-weight: bold;
+}
+
+.trading-popup__line-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.trading-popup_edit-diagram-btn-wrapper {
+  display: flex;
+  justify-content: space-around;
+}
+
+.trading-popup_edit-diagram-btn {
+  background-color: rgba(115, 187, 221, 0.877);
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid gray;
+}
+
+.trading-popup__radio-param {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.trading-popup__radio-param-item {
+  margin-right: 10px;
+}
+
+.trading-popup__radio-param-item-label {
+  margin-right: 5px;
+}
+
+.btn:hover {
+  cursor: pointer;
 }
