@@ -17,12 +17,13 @@ export default {
         chart: null,
       },
       nRSI: 3,
+      symb: "<",
+      isRefShow: false,
       nWilliams: 3,
       isShowPopupRSI: false,
       isError: false,
       isShowPopupWilliams: false,
       isShowPopupMomentum: false,
-      //   isShowEditData: false,
       nMomentum: 3,
       ohlcvData: null,
       indicatorType: "Индикаторы",
@@ -110,7 +111,12 @@ export default {
         String(tim).substr(2, 2),
         String(tim).substr(4, 2)
       );
-      return dateFormat.getTime() + 18000000;
+      let res = 0;
+      if (!isNaN(dateFormat.getTime() + 18000000)) {
+        res = dateFormat.getTime() + 18000000;
+      }
+      console.log(res);
+      return res;
     },
     inputFile(e) {
       var file = e.target.files[0];
@@ -132,7 +138,11 @@ export default {
     },
     setFormatData() {
       this.getArrayData().then(() => {
-        this.chart.chart.data = this.ohlcvData.splice(0, 800);
+        if (this.ohlcvData.length > 500) {
+          this.chart.chart.data = this.ohlcvData.splice(0, 500);
+        } else {
+          this.chart.chart.data = this.ohlcvData;
+        }
         this.$forceUpdate();
         this.isNotDrawDiagram = true;
       });
@@ -141,6 +151,7 @@ export default {
       let dataArray = await this.ohlcvData.map((item) => {
         return item.split(",");
       });
+      console.log(dataArray[0]);
       await dataArray.forEach((element) => {
         element.splice(0, 2);
         let dat = element[0];
@@ -153,6 +164,9 @@ export default {
         return (item = item.map((element) => {
           return Number(element);
         }));
+      });
+      dataArray = dataArray.filter((item) => {
+        return item.length === 6;
       });
       this.ohlcvData = await dataArray;
     },

@@ -172,3 +172,43 @@
 .btn:hover {
   cursor: pointer;
 }
+
+.trading-menu__reference {
+  border: 1px solid;
+  border-bottom: none;
+  font-size: 14px;
+  padding: 3px;
+  margin-right: 3px;
+  background-color: transparent;
+}
+
+.trading-popup_close-btn {
+  width: 100px;
+  padding: 10px;
+  border-radius: 7px;
+  border: 1px solid gray;
+  background-color: transparent;
+  margin-right: 0;
+  margin-left: auto;
+  margin-bottom: 0;
+  margin-top: auto;
+}
+
+.popup-ref {
+  justify-content: flex-start;
+  padding: 20px;
+  width: 800px;
+  height: 500px;
+  overflow-y: auto;
+}
+
+.title-indicator {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.text-indicator {
+  font-size: 14px;
+  margin-bottom: 15px;
+}
