@@ -105,17 +105,17 @@ export default {
       }
       let dateFormat = new Date(
         String(dat).substr(0, 4),
-        String(Number(String(dat).substr(4, 2)) + 1),
+        String(Number(String(dat).substr(4, 2)) - 1),
         String(dat).substr(6, 2),
         String(tim).substr(0, 2),
         String(tim).substr(2, 2),
         String(tim).substr(4, 2)
       );
       let res = 0;
-      if (!isNaN(dateFormat.getTime() + 18000000)) {
+      if (!isNaN(dateFormat.getTime() - 18000000)) {
         res = dateFormat.getTime() + 18000000;
       }
-      console.log(res);
+      // console.log(res);
       return res;
     },
     inputFile(e) {
@@ -151,7 +151,7 @@ export default {
       let dataArray = await this.ohlcvData.map((item) => {
         return item.split(",");
       });
-      console.log(dataArray[0]);
+      // console.log(dataArray[0]);
       await dataArray.forEach((element) => {
         element.splice(0, 2);
         let dat = element[0];
@@ -194,7 +194,7 @@ export default {
         let generalRSIdata = [];
         let arrayOfGroup = [];
         let arr = [...this.chart.chart.data];
-        for (let i = 0; i <= arr.length; i++) {
+        for (let i = 0; i < arr.length; i++) {
           let newarr = [];
           for (let j = 1; j < this.nRSI + 1; j++) {
             if (i - j >= 0) {
@@ -204,16 +204,19 @@ export default {
           arrayOfGroup.push(newarr);
         }
 
+        // console.log(arrayOfGroup);
+
         arrayOfGroup.forEach((element) => {
           let upCandles = 0;
           let downCadles = 0;
           element.forEach((item) => {
-            if (item[1] < item[4]) {
+            if (item[1] <= item[4]) {
               upCandles = upCandles + 1;
             } else {
               downCadles = downCadles + 1;
             }
           });
+          // console.log(upCandles, downCadles);
           let rsiValue = (upCandles / (upCandles + downCadles)) * 100;
           if (element[0] && element[0][0]) {
             generalRSIdata.push([element[0][0], rsiValue]);
